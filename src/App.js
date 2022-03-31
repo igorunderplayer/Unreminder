@@ -39,13 +39,13 @@ export default function App() {
 
   const onLoginButtonPress = async () => {
     try {
-    const { idToken } = await GoogleSignin.signIn();
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken)
+      const { idToken } = await GoogleSignin.signIn();
+      const googleCredential = auth.GoogleAuthProvider.credential(idToken)
 
-    return auth().signInWithCredential(googleCredential)
+     return auth().signInWithCredential(googleCredential)
     } catch(err) {
       alert('Login cancelado')
-      console.log(err)
+      alert('Erro: ' + err)
     }
   }
 
@@ -70,6 +70,7 @@ export default function App() {
     if(!userDb.exists) {
       await userRef.set({
         displayName: user.displayName,
+        email: user.email, // rsrs
         id: user.uid,
         photoURL: user.photoURL
       })
