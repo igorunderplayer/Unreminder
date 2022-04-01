@@ -241,16 +241,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#6546e7',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 62,
-    height: 62,
+    width: 58,
+    height: 58,
     borderRadius: 24,
-    position: 'relative',
-    bottom: 0
   },
   addReminderText: {
-    fontSize: 24,
+    fontSize: 38,
     color: '#fff',
     textAlign: 'center',
-    padding: 18
+    fontFamily: 'Roboto_300Light'
   }
 });
