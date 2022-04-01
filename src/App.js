@@ -152,8 +152,8 @@ export default function App() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <ExpoStatusBar style="auto" />
-        <Text style={styles.text}>Vc precisa fazer login!!!</Text>
+        <ExpoStatusBar backgroundColor="#000" />
+        <Text style={{ alignSelf: 'center', ...styles.text }}>Vc precisa fazer login!!!</Text>
         <TouchableOpacity onPress={onLoginButtonPress} style={styles.googleSignin} activeOpacity={0.4}>
         <AntDesign
           name="google"
@@ -168,7 +168,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <ExpoStatusBar style="auto" />
+      <ExpoStatusBar backgroundColor="#000" />
 
       <Header profile={user} />
 
@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
+    justifyContent: 'center',
     paddingTop: StatusBar.currentHeight
   },
   reminderList: {
@@ -215,6 +216,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto_300Light'
   },
   googleSignin: {
+    alignSelf: 'center',
     backgroundColor: '#000',
     padding: 12,
     borderRadius: 12,
@@ -223,7 +225,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    margin: 6
   },
   signinText: {
     color: '#fff',
