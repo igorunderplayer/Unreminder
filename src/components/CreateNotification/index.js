@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
-import { View, ScrollView, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native'
+import { View, ScrollView, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Modal } from 'react-native'
 
 import DatePicker from 'react-native-date-picker'
 
 
-function CreateNotification ({ onClose, onCreate }) {
+function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
   const [title, setTitle] = useState('')
   const [details, setDetails] = useState('')
   const [date, setDate] = useState(new Date())
@@ -21,80 +21,85 @@ function CreateNotification ({ onClose, onCreate }) {
 
     setTitle('')
     setDate(new Date())
-    onClose()
+    setModalVisible(!modalVisible)
   }
 
-  const today = new Date()
-  today.setMonth(today.getMonth() + 1)
-  today.setHours(today.getHours() - 1)
-  const oneMonthLater = new Date(today)
-
   return (
-    <View style={styles.container}>
-      <TouchableOpacity
-        onPress={onClose}
-        style={{
-            position: 'absolute',
-            top: 3,
-            left: 6
-        }}>
+    <Modal
+      transparent
+      visible={modalVisible}
+      animationType="slide"
+      onRequestClose={() => setModalVisible(!modalVisible)}
+    >
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'flex-end' }}>
+        <View style={styles.container}>
+          <TouchableOpacity
+            onPress={() => setModalVisible(!modalVisible)}
+            style={{
+                position: 'absolute',
+                top: 3,
+                left: 6
+            }}>
 
-        <Text style={{ color: '#666', fontSize: 22}}>✖ (temp)</Text>
+            <Text style={{ color: '#666', fontSize: 22}}>✖ (temp)</Text>
 
-      </TouchableOpacity>
+          </TouchableOpacity>
 
-      <Text style={styles.title}>Criar um novo lembrete!</Text>
+          <Text style={styles.title}>Criar um novo lembrete!</Text>
 
-      <View style={{ width: '100%', alignItems: 'center' }}>
-        <TextInput
-          style={styles.textInput}
-          placeholder="Placeholder top"
-          placeholderTextColor="#555"
-          maxLength={38}
-          onChangeText={(text) => setTitle(text)}
-          value={title}
-        />
+          <View style={{ width: '100%', alignItems: 'center' }}>
+            <TextInput
+              style={styles.textInput}
+              placeholder="Placeholder top"
+              placeholderTextColor="#555"
+              maxLength={38}
+              onChangeText={(text) => setTitle(text)}
+              value={title}
+            />
 
-        <TextInput
-          style={styles.textInput}
-          placeholder="Detalhes do seu lembrete..."
-          placeholderTextColor="#555"
-          multiline={true}
-          onChangeText={(text) => setDetails(text)}
-          value={details}
-        />
+            <TextInput
+              style={styles.textInput}
+              placeholder="Detalhes do seu lembrete..."
+              placeholderTextColor="#555"
+              multiline={true}
+              onChangeText={(text) => setDetails(text)}
+              value={details}
+            />
 
+          </View>
+
+          <DatePicker
+            date={date}
+            onDateChange={setDate}
+            minimumDate={new Date()}
+            textColor="#fff"
+            fadeToColor="none"
+          />
+
+          <Text style={{
+            fontStyle: 'italic',
+            color: '#777',
+            fontFamily: 'Roboto_300Light',
+            fontSize: 12
+          }}> obs: se a data for mt longe, vc provavelmente n sera notificado </Text>      
+
+          <TouchableOpacity
+            style={styles.createNotificationButton}
+            onPress={handlePress}
+            activeOpacity={0.4}
+          >
+          <Text style={styles.createNotificationButtonText}>Adicionar</Text>
+          </TouchableOpacity>
+
+        </View>
       </View>
-
-      <DatePicker
-        date={date}
-        onDateChange={setDate}
-        minimumDate={new Date()}
-        textColor="#fff"
-        fadeToColor="none"
-      />
-
-      <Text style={{
-        fontStyle: 'italic',
-        color: '#777',
-        fontFamily: 'Roboto_300Light',
-        fontSize: 12
-      }}> obs: se a data for mt longe, vc provavelmente n sera notificado </Text>      
-
-      <TouchableOpacity
-        style={styles.createNotificationButton}
-        onPress={handlePress}
-      >
-        <Text style={styles.createNotificationButtonText}>Adicionar</Text>
-      </TouchableOpacity>
-    </View>
+    </Modal>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
-    bottom: 0,
-    width: '95%',
+    width: '98%',
     height: '95%',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,

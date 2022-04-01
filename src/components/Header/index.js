@@ -28,14 +28,12 @@ function Header ({ profile }) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
-    position: 'relative',
+    alignItems: 'center',
     height: 56,
     width: '100%',
-    top: 28,
     padding: 8,
-    zIndex: 10,
+    zIndex: 0,
     backgroundColor: '#000',
   },
   text: {

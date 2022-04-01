@@ -1,6 +1,6 @@
-import { StatusBar } from 'expo-status-bar';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
 import OneSignal from 'react-native-onesignal';
 import { useFonts, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
@@ -64,6 +64,8 @@ export default function App() {
 
     return subscriber
   }, [user])
+
+  useEffect(() => { console.log(showCreateNotificationPopup) }, [showCreateNotificationPopup])
 
   const createReminder = async (reminder) => {
     console.log(reminder)
@@ -150,7 +152,7 @@ export default function App() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <StatusBar style="auto" />
+        <ExpoStatusBar style="auto" />
         <Text style={styles.text}>Vc precisa fazer login!!!</Text>
         <TouchableOpacity onPress={onLoginButtonPress} style={styles.googleSignin} activeOpacity={0.4}>
         <AntDesign
@@ -166,11 +168,18 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <StatusBar style="auto" />
+      <ExpoStatusBar style="auto" />
 
       <Header profile={user} />
 
-      <Text style={styles.text}>Welcome!</Text>
+
+      <CreateNotification
+        modalVisible={showCreateNotificationPopup}
+        setModalVisible={setShowCreateNotificationPopup}
+        onClose={() => setShowCreateNotificationPopup(false)}
+        onCreate={onCreateReminder}
+      />
+
 
       <ScrollView contentContainerStyle={styles.reminderList}>
         { reminders.map(r =>
@@ -178,19 +187,13 @@ export default function App() {
         )}
       </ScrollView>
 
-      <View style={styles.addReminderContainer}>
-         <TouchableOpacity style={styles.addReminder} onPress={() => setShowCreateNotificationPopup(true)}>
-            <Text style={styles.text}>Adicionar</Text> 
+      <View style={styles.bottomContainer}>
+        <TouchableOpacity style={styles.addReminderContainer} onPress={() => setShowCreateNotificationPopup(true)}>
+          <Text style={styles.addReminderText}>+</Text> 
         </TouchableOpacity>
-      </View> 
-      
-      { showCreateNotificationPopup ?
-        <CreateNotification
-          onClose={() => setShowCreateNotificationPopup(false)}
-          onCreate={onCreateReminder}
-        />
-        : <></>
-      }
+      </View>
+     
+
     </View>
   );
 }
@@ -199,19 +202,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: StatusBar.currentHeight
   },
   reminderList: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    alignItems: 'center',
-    justifyContent: 'space-around'
+    flex: 1,
+    alignItems: 'flex-start',
+    backgroundColor: 'red',
+    padding: 6
   },
   text: {
     color: '#fff',
-    fontSize: 18,
-    fontFamily: 'Roboto_400Regular'
+    fontSize: 22,
+    fontFamily: 'Roboto_300Light'
   },
   googleSignin: {
     backgroundColor: '#000',
@@ -229,19 +231,27 @@ const styles = StyleSheet.create({
     padding: 6,
     fontFamily: 'Roboto_300Light'
   },
-  addReminderContainer: {
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+  bottomContainer: {
     width: '100%',
-    height: 68,
-  },
-  addReminder: {
-    backgroundColor: '#6546e7',
-    height: '80%',
-    width: '75%',
-    borderRadius: 18,
+    height: 72,
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  addReminderContainer: {
+    backgroundColor: '#6546e7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 62,
+    height: 62,
+    borderRadius: 24,
+    position: 'relative',
+    bottom: 0
+  },
+  addReminderText: {
+    fontSize: 24,
+    color: '#fff',
+    textAlign: 'center',
+    padding: 18
   }
 });

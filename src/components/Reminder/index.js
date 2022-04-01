@@ -7,7 +7,6 @@ function Reminder ({ data }) {
   const [seeDetails, setSeeDetails] = useState(false)
 
   function handleOnPress() {
-    console.log('handleOnPress')
     setSeeDetails(val => !val)
   }
   return (
@@ -24,14 +23,14 @@ function Reminder ({ data }) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#333',
+    backgroundColor: '#111',
     width: '95%',
     padding: 12,
     borderColor: '#777',
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 18,
-    margin: 6
+    marginVertical: 6
   },
   reminderTitle: {
     fontFamily: 'Roboto_300Light',
