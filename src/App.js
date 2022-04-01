@@ -4,10 +4,12 @@ import { StyleSheet, Text, View, TouchableOpacity, ScrollView } from 'react-nati
 import OneSignal from 'react-native-onesignal';
 import { useFonts, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
+import { AntDesign } from '@expo/vector-icons'
+
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore'
 
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
 import { Header } from './components/Header';
 import { CreateNotification } from './components/CreateNotification';
@@ -33,8 +35,8 @@ export default function App() {
 
   const onAuthStateChanged = (user) => {
     setUser(user)
-    if(user) OneSignal.setExternalUserId(user?.uid)
-    if(initializing) setInitializing(false)
+    if (user) OneSignal.setExternalUserId(user?.uid)
+    if (initializing) setInitializing(false)
   }
 
   const onLoginButtonPress = async () => {
@@ -43,7 +45,7 @@ export default function App() {
       const googleCredential = auth.GoogleAuthProvider.credential(idToken)
 
      return auth().signInWithCredential(googleCredential)
-    } catch(err) {
+    } catch (err) {
       alert('Login cancelado')
       alert('Erro: ' + err)
     }
@@ -56,7 +58,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    if(!user) return
+    if (!user) return
     const userRef = firestore().collection('users').doc(user.uid)
     const subscriber = userRef.collection('reminders').onSnapshot(onSnapshotResult)
 
@@ -67,7 +69,7 @@ export default function App() {
     console.log(reminder)
     const userRef = firestore().collection('users').doc(user.uid)
     const userDb = await userRef.get()
-    if(!userDb.exists) {
+    if (!userDb.exists) {
       await userRef.set({
         displayName: user.displayName,
         email: user.email, // rsrs
@@ -78,6 +80,7 @@ export default function App() {
 
     userRef.collection('reminders').doc(reminder.id).set({
       title: reminder.title,
+      details: reminder.details,
       id: reminder.id ?? null
     }).catch(err => console.error(err))
   }
@@ -108,7 +111,7 @@ export default function App() {
     const data = await res.json()
     const reminderObj = {
       id: data.id,
-      title: reminder.title,
+      ...reminder
     }
 
     createReminder(reminderObj)
@@ -140,18 +143,24 @@ export default function App() {
     return subscriber
   }, [])
 
-  if(initializing) {
+  if (initializing) {
     return <Text>Loading...</Text>
   }
 
-  if(!user) {
+  if (!user) {
     return (
-      <>
-        <Text>Vc precisa fazer login!!!</Text>
-        <TouchableOpacity onPress={onLoginButtonPress}>
-          <Text>Login with google</Text>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <Text style={styles.text}>Vc precisa fazer login!!!</Text>
+        <TouchableOpacity onPress={onLoginButtonPress} style={styles.googleSignin} activeOpacity={0.4}>
+        <AntDesign
+          name="google"
+          color="#fff"
+          size={18}
+        />
+          <Text style={styles.signinText}>Entrar com google</Text>
         </TouchableOpacity>
-      </>
+      </View>
     )
   }
 
@@ -204,6 +213,22 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontFamily: 'Roboto_400Regular'
   },
+  googleSignin: {
+    backgroundColor: '#000',
+    padding: 12,
+    borderRadius: 12,
+    borderColor: '#777',
+    borderStyle: 'solid',
+    borderWidth: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  signinText: {
+    color: '#fff',
+    padding: 6,
+    fontFamily: 'Roboto_300Light'
+  },
   addReminderContainer: {
     backgroundColor: '#000',
     justifyContent: 'center',
@@ -212,7 +237,7 @@ const styles = StyleSheet.create({
     height: 68,
   },
   addReminder: {
-    backgroundColor: '#4254f5',
+    backgroundColor: '#6546e7',
     height: '80%',
     width: '75%',
     borderRadius: 18,

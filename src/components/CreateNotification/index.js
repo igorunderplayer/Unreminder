@@ -1,19 +1,24 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
+import { View, ScrollView, Text, StyleSheet, TouchableOpacity, TextInput, Alert } from 'react-native'
 
 import DatePicker from 'react-native-date-picker'
 
 
 function CreateNotification ({ onClose, onCreate }) {
   const [title, setTitle] = useState('')
+  const [details, setDetails] = useState('')
   const [date, setDate] = useState(new Date())
 
   const handlePress = () => {
-    if(title.length < 1) return
+    if (title.length < 1 || details.length < 1) return
+    if (title.length > 38) return Alert.alert('nha~', '😳 Seu titulo é muito grande oni-chan, tente um menor..... (q tenha no max 38 caracteres)')
+
     onCreate({
       title,
-      date
+      date,
+      details
     })
+
     setTitle('')
     setDate(new Date())
     onClose()
@@ -40,13 +45,26 @@ function CreateNotification ({ onClose, onCreate }) {
 
       <Text style={styles.title}>Criar um novo lembrete!</Text>
 
-      <TextInput
-        style={styles.textInput}
-        placeholder="Placeholder top"
-        placeholderTextColor="#555"
-        onChangeText={(text) => setTitle(text)}
-        value={title}
-      />
+      <View style={{ width: '100%', alignItems: 'center' }}>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Placeholder top"
+          placeholderTextColor="#555"
+          maxLength={38}
+          onChangeText={(text) => setTitle(text)}
+          value={title}
+        />
+
+        <TextInput
+          style={styles.textInput}
+          placeholder="Detalhes do seu lembrete..."
+          placeholderTextColor="#555"
+          multiline={true}
+          onChangeText={(text) => setDetails(text)}
+          value={details}
+        />
+
+      </View>
 
       <DatePicker
         date={date}
@@ -58,16 +76,16 @@ function CreateNotification ({ onClose, onCreate }) {
 
       <Text style={{
         fontStyle: 'italic',
-        color: '#adadad',
+        color: '#777',
         fontFamily: 'Roboto_300Light',
         fontSize: 12
-      }}> obs: se a data for mt longe, vc provavelmente n sera notificado </Text>
+      }}> obs: se a data for mt longe, vc provavelmente n sera notificado </Text>      
 
       <TouchableOpacity
         style={styles.createNotificationButton}
         onPress={handlePress}
       >
-        <Text style={styles.createNotificationButtonText}>Criar</Text>
+        <Text style={styles.createNotificationButtonText}>Adicionar</Text>
       </TouchableOpacity>
     </View>
   )
@@ -75,14 +93,20 @@ function CreateNotification ({ onClose, onCreate }) {
 
 const styles = StyleSheet.create({
   container: {
-    top: 18,
+    bottom: 0,
     width: '95%',
-    height: '96%',
-    borderRadius: 12,
-    backgroundColor: '#1b1a18',
+    height: '95%',
+    borderTopLeftRadius: 12,
+    borderTopRightRadius: 12,
+    borderTopColor: '#777',
+    borderLeftColor: '#777',
+    borderRightColor: '#777',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    backgroundColor: '#000',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 24,
+    padding: 14,
     position: 'absolute',
     zIndex: 69
   },
@@ -94,11 +118,13 @@ const styles = StyleSheet.create({
   },
   textInput: {
     width: '90%',
-    height: 44,
+    maxHeight: 256,
+    minHeight: 44,
     backgroundColor: '#333',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 16,
+    margin: 4,
     color: '#fff'
   },
   createNotificationButton: {
