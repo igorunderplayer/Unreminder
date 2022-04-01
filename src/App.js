@@ -205,9 +205,8 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight
   },
   reminderList: {
-    flex: 1,
     alignItems: 'flex-start',
-    backgroundColor: 'red',
+    backgroundColor: '#000',
     padding: 6
   },
   text: {

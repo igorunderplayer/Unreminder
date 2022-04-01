@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     borderStyle: 'solid',
     borderWidth: 1,
     borderRadius: 18,
-    marginVertical: 6
+    marginVertical: 4
   },
   reminderTitle: {
     fontFamily: 'Roboto_300Light',

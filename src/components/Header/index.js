@@ -35,6 +35,9 @@ const styles = StyleSheet.create({
     padding: 8,
     zIndex: 0,
     backgroundColor: '#000',
+    borderColor: '#777',
+    borderBottomWidth: 1,
+    borderStyle: 'solid'
   },
   text: {
     fontFamily: 'Roboto_300Light',
