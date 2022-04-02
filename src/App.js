@@ -1,6 +1,6 @@
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, ToastAndroid, Platform } from 'react-native';
 import OneSignal from 'react-native-onesignal';
 import { useFonts, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
@@ -9,7 +9,7 @@ import { AntDesign } from '@expo/vector-icons'
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore'
 
-import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 import { Header } from './components/Header';
 import { CreateNotification } from './components/CreateNotification';
@@ -25,7 +25,7 @@ GoogleSignin.configure({
 export default function App() {
   const [user, setUser] = useState()
   const [initializing, setInitializing] = useState(true)
-  const [showCreateNotificationPopup, setShowCreateNotificationPopup] = useState(true)
+  const [showCreateNotificationPopup, setShowCreateNotificationPopup] = useState(false)
   const [fontsLoaded] = useFonts({
     Roboto_300Light,
     Roboto_400Regular
@@ -60,15 +60,25 @@ export default function App() {
   useEffect(() => {
     if (!user) return
     const userRef = firestore().collection('users').doc(user.uid)
-    const subscriber = userRef.collection('reminders').onSnapshot(onSnapshotResult)
+    const subscriber = userRef.collection('reminders').orderBy('createdAt', 'desc').onSnapshot(onSnapshotResult)
 
     return subscriber
   }, [user])
 
-  useEffect(() => { console.log(showCreateNotificationPopup) }, [showCreateNotificationPopup])
+  const deleteReminder = async (reminder) => {
+    const userRef = firestore().collection('users').doc(user.uid)
+    await userRef.collection('reminders').doc(reminder.id).delete()
+
+    await fetch(`${NOTIFICATION_API_URL}/notifications/${reminder.id}`, {
+      method: 'DELETE'
+    })
+
+    if(Platform.OS === 'android') {
+      ToastAndroid.show('Lembrete deletado', ToastAndroid.SHORT)
+    }
+  }
 
   const createReminder = async (reminder) => {
-    console.log(reminder)
     const userRef = firestore().collection('users').doc(user.uid)
     const userDb = await userRef.get()
     if (!userDb.exists) {
@@ -81,29 +91,37 @@ export default function App() {
     }
 
     userRef.collection('reminders').doc(reminder.id).set({
-      title: reminder.title,
-      details: reminder.details,
-      id: reminder.id ?? null
+      ...reminder,
+      id: reminder.id ?? Date.now().toString()
     }).catch(err => console.error(err))
   }
 
   const onCreateReminder = async (reminder) => {
-    console.log(reminder)
+    setReminders(val => {
+      return [{ ...reminder, id: 'temp reminder' }, ...val]
+    })
+
     const notificationObject = {
-        header: 'Lembrete!!',
-        contents: { en: reminder.title },
-        userId: [user?.uid],
+	userId: user?.uid,
+	header: 'Lembrete!',
+	contents: { en: reminder.title },
         sendAfter: reminder.date.toUTCString()
     }
+    
 
     const res = await fetch(`${NOTIFICATION_API_URL}/schedule`, {
       method: 'POST',
-      body: JSON.stringify(notificationObject)
+      body: JSON.stringify(notificationObject),
+      headers: {
+        'Content-Type': 'application/json'
+      }
     })
 
     const data = await res.json()
+
     const reminderObj = {
       id: data.id,
+      createdAt: firestore.FieldValue.serverTimestamp(), 
       ...reminder
     }
 
@@ -136,7 +154,7 @@ export default function App() {
     return subscriber
   }, [])
 
-  if (initializing) {
+  if (!fontsLoaded || initializing) {
     return <Text>Loading...</Text>
   }
 
@@ -174,7 +192,7 @@ export default function App() {
 
       <ScrollView contentContainerStyle={styles.reminderList}>
         { reminders.map(r =>
-          <Reminder key={r.id} data={r} />
+          <Reminder key={r.id} data={r} onRequestDelete={deleteReminder} />
         )}
       </ScrollView>
 

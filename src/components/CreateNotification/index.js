@@ -20,6 +20,7 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
     })
 
     setTitle('')
+    setDetails('')
     setDate(new Date())
     setModalVisible(!modalVisible)
   }
@@ -99,8 +100,8 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: '98%',
-    height: '95%',
+    width: '99%',
+    height: '98%',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     borderTopColor: '#777',
@@ -125,10 +126,13 @@ const styles = StyleSheet.create({
     width: '90%',
     maxHeight: 256,
     minHeight: 44,
-    backgroundColor: '#333',
+    backgroundColor: '#111',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 16,
+    borderColor: '#777',
+    borderWidth: 1,
+    borderStyle: 'solid',
     margin: 4,
     color: '#fff'
   },
@@ -137,7 +141,8 @@ const styles = StyleSheet.create({
     height: 48,
     backgroundColor: '#6546e7',
     padding: 12,
-    borderRadius: 18
+    justifyContent: 'center',
+    borderRadius: 18,
   },
   createNotificationButtonText: {
     color: '#fff',
