@@ -15,7 +15,7 @@ import { Header } from './components/Header';
 import { CreateNotification } from './components/CreateNotification';
 import { Reminder } from './components/Reminder';
 
-import { ONE_SIGNAL_APP_ID, ONE_SIGNAL_API_KEY, WEBCLIENT_ID } from '@env'
+import { ONE_SIGNAL_APP_ID, NOTIFICATION_API_URL, WEBCLIENT_ID } from '@env'
 
 GoogleSignin.configure({
   scopes: ['email', 'profile'],
@@ -90,21 +90,15 @@ export default function App() {
   const onCreateReminder = async (reminder) => {
     console.log(reminder)
     const notificationObject = {
-        app_id: ONE_SIGNAL_APP_ID,
-        headings: { en: 'Lembrete!!' },
+        header: 'Lembrete!!',
         contents: { en: reminder.title },
-        include_external_user_ids: [user?.uid],
-        channel_for_external_user_ids: "push",
-        send_after: reminder.date.toUTCString()
+        userId: [user?.uid],
+        sendAfter: reminder.date.toUTCString()
     }
 
-    const res = await fetch('https://onesignal.com/api/v1/notifications', {
+    const res = await fetch(`${NOTIFICATION_API_URL}/schedule`, {
       method: 'POST',
-      body: JSON.stringify(notificationObject),
-      headers: {
-        "Content-Type": 'application/json; charset=utf-8',
-        Authorization: `Basic ${ONE_SIGNAL_API_KEY}`
-      }
+      body: JSON.stringify(notificationObject)
     })
 
     const data = await res.json()
