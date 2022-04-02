@@ -15,11 +15,11 @@ import { Header } from './components/Header';
 import { CreateNotification } from './components/CreateNotification';
 import { Reminder } from './components/Reminder';
 
-import { OneSignalAppId, OneSignalApiKey, webClientId } from './config.json';
+import { ONE_SIGNAL_APP_ID, ONE_SIGNAL_API_KEY, WEBCLIENT_ID } from '@env'
 
 GoogleSignin.configure({
   scopes: ['email', 'profile'],
-  webClientId
+  webClientId: WEBCLIENT_ID
 })
 
 export default function App() {
@@ -90,15 +90,12 @@ export default function App() {
   const onCreateReminder = async (reminder) => {
     console.log(reminder)
     const notificationObject = {
-        app_id: OneSignalAppId,
+        app_id: ONE_SIGNAL_APP_ID,
         headings: { en: 'Lembrete!!' },
         contents: { en: reminder.title },
         include_external_user_ids: [user?.uid],
         channel_for_external_user_ids: "push",
-        send_after: reminder.date.toUTCString(),
-        headers: {
-          Authorization: `Basic ${OneSignalApiKey}`
-        }
+        send_after: reminder.date.toUTCString()
     }
 
     const res = await fetch('https://onesignal.com/api/v1/notifications', {
@@ -106,7 +103,7 @@ export default function App() {
       body: JSON.stringify(notificationObject),
       headers: {
         "Content-Type": 'application/json; charset=utf-8',
-        Authorization: `Basic ${OneSignalApiKey}`
+        Authorization: `Basic ${ONE_SIGNAL_API_KEY}`
       }
     })
 
@@ -123,7 +120,7 @@ export default function App() {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged)
 
     OneSignal.setLogLevel(6, 0)
-    OneSignal.setAppId(OneSignalAppId)
+    OneSignal.setAppId(ONE_SIGNAL_APP_ID)
     OneSignal.setExternalUserId(user?.uid)
 
     //Method for handling notifications received while app in foreground
