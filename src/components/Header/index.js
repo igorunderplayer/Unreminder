@@ -1,7 +1,9 @@
-import React, {} from 'react'
+import React from 'react'
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
 
 import auth from '@react-native-firebase/auth'
+
+import { AntDesign } from '@expo/vector-icons'
 
 function Header ({ profile }) {
   
@@ -12,8 +14,14 @@ function Header ({ profile }) {
   return (
     <View style={styles.container}>
 
-      <TouchableOpacity onPress={signOut}>
-        <Text style={styles.text}>SignOut</Text>
+      <TouchableOpacity onPress={signOut} style={styles.logout}>
+        <AntDesign
+          name="logout"
+          color="#fff"
+          size={18}
+        />
+
+        <Text style={styles.text}>Logout</Text>
       </TouchableOpacity>
 
       <View style={styles.info}>
@@ -32,8 +40,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: 56,
     width: '100%',
-    padding: 8,
-    zIndex: 0,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     backgroundColor: '#000',
     borderColor: '#777',
     borderBottomWidth: 1,
@@ -44,6 +52,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     padding: 8
+  },
+  logout: {
+    flexDirection: 'row',
+    alignItems: 'center'
   },
   info: {
     alignItems: 'center',

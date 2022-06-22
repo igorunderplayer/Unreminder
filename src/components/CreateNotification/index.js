@@ -1,8 +1,16 @@
 import React, { useState } from 'react'
-import { View, ScrollView, Text, StyleSheet, TouchableOpacity, TextInput, Alert, Modal } from 'react-native'
+import {
+  View,
+  ScrollView,
+  Text, StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Alert,
+  Modal
+} from 'react-native'
 
 import DatePicker from 'react-native-date-picker'
-
+import { AntDesign } from '@expo/vector-icons'
 
 function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
   const [title, setTitle] = useState('')
@@ -38,11 +46,21 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
             onPress={() => setModalVisible(!modalVisible)}
             style={{
                 position: 'absolute',
-                top: 3,
-                left: 6
+                top: 8,
+                left: 8,
+                backgroundColor: '#e74646',
+                borderRadius: 14,
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 26,
+                height: 28
             }}>
 
-            <Text style={{ color: '#666', fontSize: 22}}>✖ (temp)</Text>
+            <AntDesign
+              name="close"
+              color="#fff"
+              size={22}
+            />
 
           </TouchableOpacity>
 
@@ -51,7 +69,7 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
           <View style={{ width: '100%', alignItems: 'center' }}>
             <TextInput
               style={styles.textInput}
-              placeholder="Placeholder top"
+              placeholder="Titulo do seu lembrete..."
               placeholderTextColor="#555"
               maxLength={38}
               onChangeText={(text) => setTitle(text)}
@@ -100,7 +118,7 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
 
 const styles = StyleSheet.create({
   container: {
-    width: '99%',
+    width: '100%',
     height: '98%',
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,

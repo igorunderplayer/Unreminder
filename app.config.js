@@ -7,6 +7,9 @@ export default {
     "assetBundlePatterns": [
       "**/*"
     ],
+    "splash": {
+      "backgroundColor": "#000000"
+    },
     "android": {
       "googleServicesFile": "./google-services.json",
       "package": "com.unreminder"

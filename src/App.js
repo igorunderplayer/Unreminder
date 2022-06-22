@@ -1,6 +1,6 @@
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, ToastAndroid, Platform } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, ToastAndroid, Platform, ActivityIndicator } from 'react-native';
 import OneSignal from 'react-native-onesignal';
 import { useFonts, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
@@ -25,6 +25,7 @@ GoogleSignin.configure({
 export default function App() {
   const [user, setUser] = useState()
   const [initializing, setInitializing] = useState(true)
+  const [loggingIn, setLoggingIn] = useState(false)
   const [showCreateNotificationPopup, setShowCreateNotificationPopup] = useState(false)
   const [fontsLoaded] = useFonts({
     Roboto_300Light,
@@ -40,14 +41,19 @@ export default function App() {
   }
 
   const onLoginButtonPress = async () => {
+    if (loggingIn) return
+
+    setLoggingIn(true)
     try {
       const { idToken } = await GoogleSignin.signIn();
       const googleCredential = auth.GoogleAuthProvider.credential(idToken)
 
-     return auth().signInWithCredential(googleCredential)
+     return await auth().signInWithCredential(googleCredential)
     } catch (err) {
       alert('Login cancelado')
       alert('Erro: ' + err)
+    } finally {
+      setLoggingIn(false)
     }
   }
 
@@ -66,6 +72,10 @@ export default function App() {
   }, [user])
 
   const deleteReminder = async (reminder) => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.show('Deletando lembrete...', ToastAndroid.SHORT)
+    }
+
     const userRef = firestore().collection('users').doc(user.uid)
     await userRef.collection('reminders').doc(reminder.id).delete()
 
@@ -73,7 +83,7 @@ export default function App() {
       method: 'DELETE'
     })
 
-    if(Platform.OS === 'android') {
+    if (Platform.OS === 'android') {
       ToastAndroid.show('Lembrete deletado', ToastAndroid.SHORT)
     }
   }
@@ -98,7 +108,7 @@ export default function App() {
 
   const onCreateReminder = async (reminder) => {
     setReminders(val => {
-      return [{ ...reminder, id: 'temp reminder' }, ...val]
+      return [{ ...reminder, id: `temp_${Date.now()}` }, ...val]
     })
 
     const notificationObject = {
@@ -108,7 +118,6 @@ export default function App() {
         sendAfter: reminder.date.toUTCString()
     }
     
-
     const res = await fetch(`${NOTIFICATION_API_URL}/schedule`, {
       method: 'POST',
       body: JSON.stringify(notificationObject),
@@ -155,21 +164,33 @@ export default function App() {
   }, [])
 
   if (!fontsLoaded || initializing) {
-    return <Text>Loading...</Text>
+    return (
+      <View style={styles.container}>
+        <ExpoStatusBar backgroundColor="#000" />
+        <Text style={styles.text}>Loading...</Text>
+      </View>
+    )
   }
 
   if (!user) {
     return (
       <View style={styles.container}>
         <ExpoStatusBar backgroundColor="#000" />
-        <Text style={{ alignSelf: 'center', ...styles.text }}>Vc precisa fazer login!!!</Text>
-        <TouchableOpacity onPress={onLoginButtonPress} style={styles.googleSignin} activeOpacity={0.4}>
-        <AntDesign
-          name="google"
-          color="#fff"
-          size={18}
-        />
-          <Text style={styles.signinText}>Entrar com google</Text>
+        <Text style={{ alignSelf: 'center', ...styles.text }}>Faça login para entrar</Text>
+        <TouchableOpacity onPress={onLoginButtonPress} style={styles.googleSignin} activeOpacity={0.9}>
+          { loggingIn ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <>
+              <AntDesign
+                name="google"
+                color="#fff"
+                size={18}
+                style={{ paddingHorizontal: 3 }}
+              />
+              <Text style={styles.signinText}>Entrar com google</Text>
+            </>
+          )}
         </TouchableOpacity>
       </View>
     )
@@ -181,14 +202,12 @@ export default function App() {
 
       <Header profile={user} />
 
-
       <CreateNotification
         modalVisible={showCreateNotificationPopup}
         setModalVisible={setShowCreateNotificationPopup}
         onClose={() => setShowCreateNotificationPopup(false)}
         onCreate={onCreateReminder}
       />
-
 
       <ScrollView contentContainerStyle={styles.reminderList}>
         { reminders.map(r =>
@@ -201,7 +220,6 @@ export default function App() {
           <Text style={styles.addReminderText}>+</Text> 
         </TouchableOpacity>
       </View>
-     
 
     </View>
   );
@@ -235,11 +253,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    margin: 6
+    margin: 8,
+    width: 168,
+    height: 56,
   },
   signinText: {
     color: '#fff',
-    padding: 6,
+    paddingHorizontal: 3,
     fontFamily: 'Roboto_300Light'
   },
   bottomContainer: {

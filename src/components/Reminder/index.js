@@ -31,7 +31,7 @@ function Reminder ({ data, onRequestDelete }) {
   }
 
   async function handleOnPressDelete() {
-    if(await confirmUser('ctz', 'as coisas n voltam tao facil....')) {
+    if (await confirmUser('ctz', 'as coisas n voltam tao facil....')) {
       onRequestDelete(data)
     }
   }
@@ -42,7 +42,7 @@ function Reminder ({ data, onRequestDelete }) {
         style={styles.container}
       >
         <>
-          <Text style={data.id == 'temp reminder' ? { ...styles.reminderTitle, color: '#555' } : styles.reminderTitle} >{data.title}</Text>
+          <Text style={data.id.startsWith('temp_') ? { ...styles.reminderTitle, color: '#555' } : styles.reminderTitle} >{data.title}</Text>
           { seeDetails ? 
             <>
               <Text style={styles.reminderDetails} >{data.details ?? LOREM}</Text>
