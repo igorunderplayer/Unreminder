@@ -1,6 +1,6 @@
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, ToastAndroid, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, StatusBar, ToastAndroid, Platform, ActivityIndicator, Appearance } from 'react-native';
 import OneSignal from 'react-native-onesignal';
 import { useFonts, Roboto_300Light, Roboto_400Regular } from '@expo-google-fonts/roboto';
 
@@ -15,6 +15,8 @@ import { Header } from './components/Header';
 import { CreateNotification } from './components/CreateNotification';
 import { Reminder } from './components/Reminder';
 
+import appStyles from './styles/App.styles'
+
 import { ONE_SIGNAL_APP_ID, NOTIFICATION_API_URL, WEBCLIENT_ID } from '@env'
 
 GoogleSignin.configure({
@@ -27,6 +29,7 @@ export default function App() {
   const [initializing, setInitializing] = useState(true)
   const [loggingIn, setLoggingIn] = useState(false)
   const [showCreateNotificationPopup, setShowCreateNotificationPopup] = useState(false)
+  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
   const [fontsLoaded] = useFonts({
     Roboto_300Light,
     Roboto_400Regular
@@ -160,14 +163,23 @@ export default function App() {
       console.log("OneSignal: notification opened:", notification);
     });
 
-    return subscriber
+    const listener = Appearance.addChangeListener((appearence) => {
+      setColorScheme(appearence.colorScheme)
+    })
+
+    return () => {
+      subscriber()
+      listener.remove()
+    }
   }, [])
+
+  const styles = appStyles[colorScheme]
 
   if (!fontsLoaded || initializing) {
     return (
       <View style={styles.container}>
-        <ExpoStatusBar backgroundColor="#000" />
-        <Text style={styles.text}>Loading...</Text>
+        <ExpoStatusBar backgroundColor={ colorScheme == 'white' ? '#fff' : '#000' } />
+        <Text style={{ ...styles.text, textAlign: 'center' }}>Carregando...</Text>
       </View>
     )
   }
@@ -175,7 +187,7 @@ export default function App() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <ExpoStatusBar backgroundColor="#000" />
+        <ExpoStatusBar backgroundColor={ colorScheme == 'light' ? '#fff' : '#000' } />
         <Text style={{ alignSelf: 'center', ...styles.text }}>Faça login para entrar</Text>
         <TouchableOpacity onPress={onLoginButtonPress} style={styles.googleSignin} activeOpacity={0.9}>
           { loggingIn ? (
@@ -184,7 +196,7 @@ export default function App() {
             <>
               <AntDesign
                 name="google"
-                color="#fff"
+                color={ colorScheme == 'light' ? '#000' : '#fff' }
                 size={18}
                 style={{ paddingHorizontal: 3 }}
               />
@@ -198,8 +210,7 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <ExpoStatusBar backgroundColor="#000" />
-
+      <ExpoStatusBar backgroundColor={ colorScheme == 'light' ? '#fff' : '#000' } />
       <Header profile={user} />
 
       <CreateNotification

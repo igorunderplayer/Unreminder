@@ -1,21 +1,34 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View,
-  ScrollView,
-  Text, StyleSheet,
+  Text,
   TouchableOpacity,
   TextInput,
   Alert,
-  Modal
+  Modal,
+  Appearance
 } from 'react-native'
 
 import DatePicker from 'react-native-date-picker'
 import { AntDesign } from '@expo/vector-icons'
 
+import allStyles from './styles'
+
 function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
   const [title, setTitle] = useState('')
   const [details, setDetails] = useState('')
   const [date, setDate] = useState(new Date())
+  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
+  
+  useEffect(() => {
+    const listener = Appearance.addChangeListener((appearence) => {
+      setColorScheme(appearence.colorScheme)
+    })
+
+    return () => listener.remove()
+  }, [])
+
+  const styles = allStyles[colorScheme]
 
   const handlePress = () => {
     if (title.length < 1 || details.length < 1) return
@@ -91,7 +104,7 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
             date={date}
             onDateChange={setDate}
             minimumDate={new Date()}
-            textColor="#fff"
+            textColor={ colorScheme == 'light' ? '#000' : '#fff' }
             fadeToColor="none"
           />
 
@@ -116,56 +129,5 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    width: '100%',
-    height: '98%',
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
-    borderTopColor: '#777',
-    borderLeftColor: '#777',
-    borderRightColor: '#777',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    backgroundColor: '#000',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 14,
-    position: 'absolute',
-    zIndex: 69
-  },
-  title: {
-    fontFamily: 'Roboto_300Light',
-    textAlign: 'center',
-    color: '#fff',
-    fontSize: 34
-  },
-  textInput: {
-    width: '90%',
-    maxHeight: 256,
-    minHeight: 44,
-    backgroundColor: '#111',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 16,
-    borderColor: '#777',
-    borderWidth: 1,
-    borderStyle: 'solid',
-    margin: 4,
-    color: '#fff'
-  },
-  createNotificationButton: {
-    width: '90%',
-    height: 48,
-    backgroundColor: '#6546e7',
-    padding: 12,
-    justifyContent: 'center',
-    borderRadius: 18,
-  },
-  createNotificationButtonText: {
-    color: '#fff',
-    textAlign: 'center'
-  }
-})
 
 export { CreateNotification }

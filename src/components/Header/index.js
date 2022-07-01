@@ -1,15 +1,28 @@
-import React from 'react'
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { View, Text, Image, TouchableOpacity, Appearance } from 'react-native'
 
 import auth from '@react-native-firebase/auth'
 
 import { AntDesign } from '@expo/vector-icons'
 
+import allStyles from './styles'
+
 function Header ({ profile }) {
+  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
   
   const signOut = () => {
     auth().signOut()
   }
+
+  useEffect(() => {
+    const listener = Appearance.addChangeListener((appearence) => {
+      setColorScheme(appearence.colorScheme)
+    })
+
+    return () => listener.remove()
+  }, [])
+
+  const styles = allStyles[colorScheme]
 
   return (
     <View style={styles.container}>
@@ -17,7 +30,7 @@ function Header ({ profile }) {
       <TouchableOpacity onPress={signOut} style={styles.logout}>
         <AntDesign
           name="logout"
-          color="#fff"
+          color={ colorScheme == 'white' ? '#fff' : '#000' }
           size={18}
         />
 
@@ -33,42 +46,5 @@ function Header ({ profile }) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: 56,
-    width: '100%',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    backgroundColor: '#000',
-    borderColor: '#777',
-    borderBottomWidth: 1,
-    borderStyle: 'solid'
-  },
-  text: {
-    fontFamily: 'Roboto_300Light',
-    color: '#fff',
-    fontSize: 16,
-    padding: 8
-  },
-  logout: {
-    flexDirection: 'row',
-    alignItems: 'center'
-  },
-  info: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row'
-  },
-  avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    borderColor: '#4dff8b',
-    borderWidth: 1
-  }
-})
 
 export { Header }
