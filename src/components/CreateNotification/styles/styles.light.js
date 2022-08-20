@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
     zIndex: 69
   },
   title: {
-    fontFamily: 'Roboto_300Light',
+    fontFamily: 'Roboto_100Thin',
     textAlign: 'center',
     color: '#000',
     fontSize: 34
@@ -33,10 +33,11 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 16,
     borderColor: '#999',
-    borderWidth: 1,
+    borderWidth: 0,
     borderStyle: 'solid',
     margin: 4,
-    color: '#000'
+    color: '#000',
+    fontFamily: 'Roboto_300Thin'
   },
   createNotificationButton: {
     width: '90%',
@@ -48,7 +49,8 @@ const styles = StyleSheet.create({
   },
   createNotificationButtonText: {
     color: '#fff',
-    textAlign: 'center'
+    textAlign: 'center',
+    fontFamily: 'Roboto_400Regular'
   }
 })
 

@@ -6,7 +6,8 @@ import {
   TextInput,
   Alert,
   Modal,
-  Appearance
+  Appearance,
+  useColorScheme
 } from 'react-native'
 
 import DatePicker from 'react-native-date-picker'
@@ -18,15 +19,7 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
   const [title, setTitle] = useState('')
   const [details, setDetails] = useState('')
   const [date, setDate] = useState(new Date())
-  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
-  
-  useEffect(() => {
-    const listener = Appearance.addChangeListener((appearence) => {
-      setColorScheme(appearence.colorScheme)
-    })
-
-    return () => listener.remove()
-  }, [])
+  const colorScheme = useColorScheme()
 
   const styles = allStyles[colorScheme]
 
@@ -77,7 +70,7 @@ function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
 
           </TouchableOpacity>
 
-          <Text style={styles.title}>Criar um novo lembrete!</Text>
+          <Text style={styles.title}>Criar um novo lembrete</Text>
 
           <View style={{ width: '100%', alignItems: 'center' }}>
             <TextInput

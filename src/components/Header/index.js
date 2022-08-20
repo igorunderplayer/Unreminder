@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { View, Text, Image, TouchableOpacity, Appearance } from 'react-native'
+import React from 'react'
+import { View, Text, Image, TouchableOpacity, useColorScheme } from 'react-native'
 
 import auth from '@react-native-firebase/auth'
 
@@ -8,19 +8,11 @@ import { AntDesign } from '@expo/vector-icons'
 import allStyles from './styles'
 
 function Header ({ profile }) {
-  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
+  const colorScheme = useColorScheme()
   
   const signOut = () => {
     auth().signOut()
   }
-
-  useEffect(() => {
-    const listener = Appearance.addChangeListener((appearence) => {
-      setColorScheme(appearence.colorScheme)
-    })
-
-    return () => listener.remove()
-  }, [])
 
   const styles = allStyles[colorScheme]
 

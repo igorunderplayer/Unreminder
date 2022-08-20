@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react'
 import {
   View,
   Text,
-  StyleSheet,
   Pressable,
   TouchableOpacity,
   Alert,
-  Appearance
+  useColorScheme
 } from 'react-native'
 
 import allStyles from './styles'
@@ -15,15 +14,7 @@ const LOREM = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec tr
 
 function Reminder ({ data, onRequestDelete }) {
   const [seeDetails, setSeeDetails] = useState(false)
-  const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme())
-
-  useEffect(() => {
-    const listener = Appearance.addChangeListener((appearence) => {
-      setColorScheme(appearence.colorScheme)
-    })
-    
-    return () => listener.remove()
-  }, [])
+  const colorScheme = useColorScheme()
 
   const styles = allStyles[colorScheme]
 
