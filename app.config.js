@@ -3,7 +3,7 @@ export default {
   "expo": {
     "name": "unreminder",
     "slug": "unreminder",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "assetBundlePatterns": [
       "**/*"
     ],
