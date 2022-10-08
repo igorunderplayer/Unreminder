@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly'
   },
-  detailsButton: {
+  actionsButton: {
     height: 42,
     width: '45%',
     backgroundColor: '#ddd',

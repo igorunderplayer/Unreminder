@@ -11,7 +11,8 @@ function Header ({ profile }) {
   const colorScheme = useColorScheme()
   
   const signOut = () => {
-    auth().signOut()
+    auth()
+      .signOut()
   }
 
   const styles = allStyles[colorScheme]
@@ -22,7 +23,7 @@ function Header ({ profile }) {
       <TouchableOpacity onPress={signOut} style={styles.logout}>
         <AntDesign
           name="logout"
-          color={ colorScheme == 'white' ? '#fff' : '#000' }
+          color={ colorScheme == 'light' ? '#000' : '#fff' }
           size={18}
         />
 

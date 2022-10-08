@@ -1,3 +1,4 @@
+import * as Updates from 'expo-updates'
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
 import { Text, View, useColorScheme } from 'react-native'
@@ -42,6 +43,14 @@ export default function App() {
     if (initializing) setInitializing(false)
   }
 
+  const checkUpdates = async () => {
+    Updates.addListener((event) => {
+      if (event.type == Updates.UpdateEventType.UPDATE_AVAILABLE) {
+        alert('Uma atualização está disponível, reinicie o aplicativo o quanto antes')
+      }
+    })
+  }
+
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged)
 
@@ -65,14 +74,18 @@ export default function App() {
   if (!fontsLoaded || initializing) {
     return (
       <View style={styles.container}>
-        <ExpoStatusBar backgroundColor={colorScheme == 'white' ? '#fff' : '#000'} />
+        <ExpoStatusBar backgroundColor={colorScheme == 'light' ? '#fff' : '#000'} />
         <Text style={{ ...styles.text, textAlign: 'center' }}>Carregando...</Text>
       </View>
     )
   }
 
   return (
-    !user ? <SignIn /> : <Home user={user} />
+    <View style={styles.container}>
+      <ExpoStatusBar backgroundColor={colorScheme == 'light' ? '#fff' : '#000'} />
+      { !user ? <SignIn /> : <Home user={user} /> }
+    </View>
+    
   )
 }
 

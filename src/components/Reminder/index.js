@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   View,
   Text,
@@ -48,26 +48,37 @@ function Reminder ({ data, onRequestDelete }) {
     }
   }
 
+  if (!data.customStyles) {
+    data.customStyles = {}
+  }
+
+  if (data.id.startsWith('temp_')) {
+    data.customStyles.title = {
+      ...data.customStyles.title,
+      color: colorScheme == 'light' ? '#00000050' : '#FFFFFF50'
+    }
+  }
+
   return (
       <Pressable
         onPress={handleOnPress}
-        style={styles.container}
+        style={[styles.container, data.customStyles?.container]}
       >
         <>
-          <Text style={data.id.startsWith('temp_') ? { ...styles.reminderTitle, color: '#555' } : styles.reminderTitle} >{data.title}</Text>
+          <Text style={[styles.reminderTitle, data.customStyles.title]} >{data.title}</Text>
           { seeDetails ? 
             <>
-              <Text style={styles.reminderDetails} >{data.details ?? LOREM}</Text>
+              <Text style={[styles.reminderDetails, data.customStyles.details]} >{data.details ?? LOREM}</Text>
               <View style={styles.detailsBottom}>
 
                 <TouchableOpacity
-                  style={styles.detailsButton}
+                  style={[styles.actionsButton, data.customStyles.actionButton]}
                 >
-                  <Text style={styles.reminderDetails}>Editar</Text>
+                  <Text style={[styles.reminderDetails]}>Editar</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  style={styles.detailsButton}
+                  style={[styles.actionsButton, data.customStyles.actionButton]}
                   onPress={handleOnPressDelete}
                 >
                   <Text style={styles.reminderDetails}>Apagar</Text>

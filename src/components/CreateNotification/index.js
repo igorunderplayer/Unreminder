@@ -16,10 +16,10 @@ import { AntDesign } from '@expo/vector-icons'
 import allStyles from './styles'
 
 function CreateNotification ({ modalVisible, setModalVisible, onCreate }) {
-  const [title, setTitle] = useState('')
+  const [title, setTitle]     = useState('')
   const [details, setDetails] = useState('')
-  const [date, setDate] = useState(new Date())
-  const colorScheme = useColorScheme()
+  const [date, setDate]       = useState(new Date())
+  const colorScheme           = useColorScheme()
 
   const styles = allStyles[colorScheme]
 

@@ -10,6 +10,9 @@ export default {
     "splash": {
       "backgroundColor": "#000000"
     },
+    "updates": {
+      "fallbackToCacheTimeout": 60000
+    },
     "android": {
       "googleServicesFile": "./google-services.json",
       "package": "com.unreminder"

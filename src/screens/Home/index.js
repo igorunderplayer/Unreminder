@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { View, Text, ScrollView, TouchableOpacity, useColorScheme } from 'react-native'
+import { View, Text, ScrollView, TouchableOpacity, useColorScheme, ToastAndroid } from 'react-native'
 
 import firestore from '@react-native-firebase/firestore'
 
@@ -22,15 +22,20 @@ const Home = ({ user }) => {
       ToastAndroid.show('Deletando lembrete...', ToastAndroid.SHORT)
     }
 
-    const userRef = firestore().collection('users').doc(user.uid)
-    await userRef.collection('reminders').doc(reminder.id).delete()
+    try {
+      const userRef = firestore().collection('users').doc(user.uid)
+      await userRef.collection('reminders').doc(reminder.id).delete()
 
-    await fetch(`${NOTIFICATION_API_URL}/notifications/${reminder.id}`, {
-      method: 'DELETE'
-    })
+      await fetch(`${NOTIFICATION_API_URL}/notifications/${reminder.id}`, {
+        method: 'DELETE'
+      })
 
-    if (Platform.OS === 'android') {
-      ToastAndroid.show('Lembrete deletado', ToastAndroid.SHORT)
+      if (Platform.OS === 'android') {
+        ToastAndroid.show('Lembrete deletado', ToastAndroid.SHORT)
+      }
+    } catch (err) {
+      console.log('Erro ao apagar reminder: ', err)
+      alert('Não foi possivel apagar o seu lembrete')
     }
   }
 
@@ -40,7 +45,7 @@ const Home = ({ user }) => {
     if (!userDb.exists) {
       await userRef.set({
         displayName: user.displayName,
-        email: user.email, // rsrs
+        email: user.email,
         id: user.uid,
         photoURL: user.photoURL
       })
@@ -54,7 +59,12 @@ const Home = ({ user }) => {
 
   const onCreateReminder = async (reminder) => {
     setReminders(val => {
-      return [{ ...reminder, id: `temp_${Date.now()}` }, ...val]
+      return [
+      {
+        ...reminder, id: `temp_${Date.now()}`
+      },
+       ...val
+      ]
     })
 
     const notificationObject = {
