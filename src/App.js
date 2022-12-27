@@ -1,4 +1,3 @@
-import * as Updates from 'expo-updates'
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar'
 import React, { useEffect, useState } from 'react'
 import { Text, View, useColorScheme } from 'react-native'
@@ -38,17 +37,9 @@ export default function App() {
 
 
   const onAuthStateChanged = (user) => {
-    setUser(user)
     if (user) OneSignal.setExternalUserId(user?.uid)
     if (initializing) setInitializing(false)
-  }
-
-  const checkUpdates = async () => {
-    Updates.addListener((event) => {
-      if (event.type == Updates.UpdateEventType.UPDATE_AVAILABLE) {
-        alert('Uma atualização está disponível, reinicie o aplicativo o quanto antes')
-      }
-    })
+    setUser(user)
   }
 
   useEffect(() => {

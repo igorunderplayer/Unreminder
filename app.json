@@ -1,5 +1,4 @@
-
-export default {
+{
   "expo": {
     "name": "unreminder",
     "slug": "unreminder",
@@ -9,9 +8,6 @@ export default {
     ],
     "splash": {
       "backgroundColor": "#000000"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 60000
     },
     "android": {
       "googleServicesFile": "./google-services.json",
@@ -23,5 +19,10 @@ export default {
     "plugins": [
       "@react-native-google-signin/google-signin"
     ],
+    "extra": {
+      "eas": {
+        "projectId": "a148eb60-e515-4778-9314-61a1e820f528"
+      }
+    }
   }
 }
